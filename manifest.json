@@ -2,11 +2,11 @@
     "manifest_version": 3,
     "name": "YouTube Pause Lock",
     "version": "1.0",
-    "description": "Prevents users (Ethan Klein) from repeatdly pausing YouTube videos.",
+    "description": "Prevents users (Ethan Klein) from repeatedly pausing YouTube videos.",
     "action": {
         "default_popup": "popup.html"
     },
-    "permissions": ["tabs", "scripting", "activeTab", "storage"],
+    "permissions": ["activeTab", "storage"],
   
     "content_scripts": [
       {
@@ -20,6 +20,5 @@
       "48": "icons/icon-medium.png",
       "128": "icons/icon-large.png",
       "16": "icons/icon-small.png"
-    },
-    "host_permissions": ["https://www.youtube.com/watch?*"]
+    }
   }

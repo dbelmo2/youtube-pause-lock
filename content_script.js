@@ -1,3 +1,5 @@
+let isLocked = false;
+
 document.addEventListener('DOMContentLoaded', () => {
   const video = document.querySelector('video');
   if (video) {
@@ -24,6 +26,11 @@ function setupPlayListener(video) {
       return;
     }
 
+    if (isLocked) {
+      video.pause(); // Pause the video if already locked
+      return; // Ignore if already locked
+    }
+
     // Check if the button is already disabled to avoid re-triggering
     if (pauseButton.dataset.isDisabled === 'true') {
       return;
@@ -45,7 +52,7 @@ function setupPlayListener(video) {
         }
 
         const disableDuration = (result.disableDuration || 10) * 1000; // Convert to milliseconds
-        
+        isLocked = true; // Lock the button to prevent re-entry
         // Mark button as disabled
         pauseButton.dataset.isDisabled = 'true';
         
@@ -60,17 +67,11 @@ function setupPlayListener(video) {
         };
         pauseButton.addEventListener('click', preventClick, true);
 
+        video.addEventListener('click', preventClick, true);
+        // Visual feedback for disabled state
+        video.style.cursor = 'not-allowed';
 
-        // Add listeners in capture phase
-        const videoContainer = document.querySelector('.html5-main-video');
-        if (videoContainer) {
-          videoContainer.addEventListener('click', preventClick, true);
-          // Visual feedback for disabled state
-          videoContainer.style.cursor = 'not-allowed';
-        } else {
-          console.log('Video (.html5-main-video) not found.');
-        }
-        
+
         // Re-enable after the specified duration
         setTimeout(() => {
           // Check chrome.runtime before modifying the button
@@ -78,13 +79,13 @@ function setupPlayListener(video) {
             console.log('chrome.runtime unavailable or context invalidated during re-enable; skipping.');
             return;
           }
-
+          isLocked = false;
           pauseButton.style.opacity = '1';
           pauseButton.style.cursor = 'pointer'; // Restore YouTube's default cursor
           pauseButton.removeEventListener('click', preventClick, true);
-          if (videoContainer) {
-            videoContainer.removeEventListener('click', preventClick, true);
-            videoContainer.style.cursor = 'pointer';
+          if (video) {
+            video.removeEventListener('click', preventClick, true);
+            video.style.cursor = 'pointer';
           }
           pauseButton.dataset.isDisabled = 'false';
         }, disableDuration);

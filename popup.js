@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const durationInput = document.getElementById('durationInput');
     const saveButton = document.getElementById('saveButton');
     const statusMessage = document.getElementById('statusMessage');
+    const input = document.getElementById('durationInput');
   
     // Load saved duration
     chrome.storage.sync.get(['disableDuration'], (result) => {
@@ -10,6 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   
+
+    input.addEventListener('keypress', function (e) {
+        if (e.key === '-' || e.key === '+' || e.key === 'e') {
+          e.preventDefault(); // Block negative, exponential, and plus sign
+        }
+    });
+
     // Save duration when button is clicked
     saveButton.addEventListener('click', () => {
       const duration = parseInt(durationInput.value);
@@ -21,8 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.style.visibility = 'hidden'; // Hide the message after 3 seconds
           }, 3000);
         });
-      } else {
-        statusMessage.textContent = 'Please enter a valid number (1 or more).';
       }
     });
   });

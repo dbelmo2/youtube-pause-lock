@@ -26,11 +26,6 @@ function setupPlayListener(video) {
       return;
     }
 
-    if (isLocked) {
-      video.pause(); // Pause the video if already locked
-      return; // Ignore if already locked
-    }
-
     // Check if the button is already disabled to avoid re-triggering
     if (pauseButton.dataset.isDisabled === 'true') {
       return;
@@ -71,6 +66,10 @@ function setupPlayListener(video) {
         // Visual feedback for disabled state
         video.style.cursor = 'not-allowed';
 
+        const playVideo = () => video.play();
+
+        video.addEventListener('pause', playVideo);
+
 
         // Re-enable after the specified duration
         setTimeout(() => {
@@ -85,6 +84,7 @@ function setupPlayListener(video) {
           pauseButton.removeEventListener('click', preventClick, true);
           if (video) {
             video.removeEventListener('click', preventClick, true);
+            video.removeEventListener('pause', playVideo);
             video.style.cursor = 'pointer';
           }
           pauseButton.dataset.isDisabled = 'false';
